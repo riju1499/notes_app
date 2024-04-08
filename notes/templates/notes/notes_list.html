@@ -1,21 +1,26 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
-<!-- <div class="header-bar">
-    <div>
-        <h1>Hello</h1>
-    </div> -->
+
     <div id="search-wrapper">
         <form method="GET" style="margin-top: 20px; display: flex;">
             <input type ='text' name='search-area' value ="{{search_input}}">
             <input type="submit" value="Search">
 
+        
+            <select name="sort-by">
+                <option value="">Sort by</option>
+                <option value="created">Date Created</option>
+                <option value="updated">Last Updated</option>
+          
+            </select>
         </form>
-
-
     </div>
 
-</div>
+
+    
+
+
 <div class="row">
     <div class="col">
         <div class="notes_list_heading text-center mb-5">

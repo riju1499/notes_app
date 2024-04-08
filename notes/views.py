@@ -50,8 +50,21 @@ class NotesListView(LoginRequiredMixin,ListView):
         if search_input:
             context['notes']= context['notes'].filter(title__icontains=search_input)
             context['search_input'] = search_input
-        return context    
+        return context  
+    def get_queryset(self):
+        queryset = super().get_queryset().filter(user=self.request.user)
 
+        sort_by = self.request.GET.get('sort-by')
+        if sort_by == 'updated':
+            queryset = queryset.order_by('-updated')
+        elif sort_by == 'created_at':
+            queryset = queryset.order_by('-created')
+
+        search_input = self.request.GET.get('search-area') or ''
+        if search_input:
+            queryset = queryset.filter(title__icontains=search_input)
+
+        return queryset
 
 
 class NotesDetailView(LoginRequiredMixin,DetailView):
