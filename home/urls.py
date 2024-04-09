@@ -13,4 +13,6 @@ urlpatterns=[
     path('logout/', views.logout_view, name='logout'),
     path('signup/',views.SignupView.as_view(),name='signup'),
    
+   
+   
 ]

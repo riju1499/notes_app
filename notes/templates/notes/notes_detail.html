@@ -10,6 +10,7 @@
             <div class="card-body">
                 <h1 class="fs-5">{{note.title}}</h1>
                 <p>{{note.text}}</p>
+                <p>Last Updated: {{ note.updated|date:"l, F j, Y, P e" }}</p>
             </div>
             <div class="card-footer">
                 <a href="{% url 'notes.list' %}" class="btn btn-sm btn -primary"><i class="fa-solid fa-arrow-left"></i></a>

@@ -7,8 +7,10 @@ from .forms import Notesform
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponseRedirect
 from django.db.models import Q
+from django.views.generic import TemplateView
 
 # Create your views here.
+
 class NotesDeleteView(LoginRequiredMixin,DeleteView):
     model=Notes
     success_url='/smart/notes'
@@ -31,6 +33,7 @@ class NotesCreateView(CreateView):
     success_url='/smart/notes'
     form_class=Notesform
     login_url= "/login"
+
     def form_valid(self,form):
         self.object=form.save(commit=False)
         self.object.user=self.request.user
@@ -45,6 +48,8 @@ class NotesListView(LoginRequiredMixin,ListView):
         context=super().get_context_data(**kwargs)
         context['notes'] = context['notes'].filter(user=self.request.user)
         # context['count'] = context ['notes'].filter(complete=False).count()
+        for note in context['notes']:
+            note.last_updated = note.updated.strftime("%Y-%m-%d %H:%M:%S")
 
         search_input= self.request.GET.get('search-area') or ''
         if search_input:
@@ -52,19 +57,18 @@ class NotesListView(LoginRequiredMixin,ListView):
             context['search_input'] = search_input
         return context  
     def get_queryset(self):
+        
         queryset = super().get_queryset().filter(user=self.request.user)
 
-        sort_by = self.request.GET.get('sort-by')
-        if sort_by == 'updated':
-            queryset = queryset.order_by('-updated')
-        elif sort_by == 'created_at':
-            queryset = queryset.order_by('-created')
 
+        queryset = queryset.order_by('-updated')
+
+        # Filter notes based on search input, if provided
         search_input = self.request.GET.get('search-area') or ''
         if search_input:
             queryset = queryset.filter(title__icontains=search_input)
-
-        return queryset
+        # print(queryset.query)
+        return queryset 
 
 
 class NotesDetailView(LoginRequiredMixin,DetailView):
@@ -73,4 +77,5 @@ class NotesDetailView(LoginRequiredMixin,DetailView):
     login_url= "/login"
     def get_queryset(self):
         return self.request.user.notes.all()
+    
 
